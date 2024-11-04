@@ -34,7 +34,7 @@ export const navButtons: NavButton[] = [
   },
   {
     name: "VPN (Valor presente neto)",
-    path: "van",
+    path: "vpn",
     icon: <CalculateIcon />,
     description:
       "Calcula el valor presente neto, útil para evaluar la rentabilidad de una inversión en el tiempo.",

@@ -4,8 +4,9 @@ import MainLayout from "../layout/MainLayout";
 import IsPage from "../pages/CalcPages/IsPage";
 import IcPage from "../pages/CalcPages/IcPage";
 import PriPage from "../pages/CalcPages/PriPage";
-import VanPage from "../pages/CalcPages/VanPage";
+import VpnPage from "../pages/CalcPages/VpnPage";
 import TirPage from "../pages/CalcPages/TirPage";
+import VaePage from "../pages/CalcPages/VaePage";
 
 const router = createBrowserRouter([
   {
@@ -29,13 +30,17 @@ const router = createBrowserRouter([
         element: <PriPage />
       },
       {
-        path: "van",
-        element: <VanPage />
+        path: "vpn",
+        element: <VpnPage />
       },
       {
         path: "tir",
         element: <TirPage />
       },
+      {
+        path: "vae",
+        element: <VaePage />
+      }
     ]
   }
 ]);

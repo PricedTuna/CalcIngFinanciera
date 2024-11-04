@@ -6,14 +6,20 @@ interface CashFlow {
   amount: number;
 }
 
-function TirPage() {
+
+function VanPage() {
   const [initialInvestment, setInitialInvestment] = useState('');
+  const [discountRate, setDiscountRate] = useState('');
   const [periods, setPeriods] = useState(1);
   const [cashFlows, setCashFlows] = useState<CashFlow[]>([]);
-  const [irr, setIrr] = useState<number | null>(null);
+  const [npv, setNpv] = useState<number | null>(null);
 
   const handleInitialInvestmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInitialInvestment(event.target.value);
+  };
+
+  const handleDiscountRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDiscountRate(event.target.value);
   };
 
   const handlePeriodsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,36 +37,16 @@ function TirPage() {
     setCashFlows(updatedCashFlows);
   };
 
-  const calculateIRR = () => {
+  const calculateNPV = () => {
     const investment = parseFloat(initialInvestment);
+    const rate = parseFloat(discountRate) / 100;
     const cashFlowValues = cashFlows.map((cf) => cf.amount);
-    
-    const guessRate = 0.1; // Valor inicial para la tasa de aproximación
-    const tolerance = 0.0001; // Tolerancia para la precisión de la TIR
-    let rate = guessRate;
-    let iteration = 0;
-    let maxIterations = 1000;
 
-    // Función para calcular el VAN en función de una tasa de descuento
-    const npv = (rate: number) => 
-      -investment + cashFlowValues.reduce((acc, cashFlow, i) => acc + cashFlow / Math.pow(1 + rate, i + 1), 0);
+    const calculatedNPV = cashFlowValues.reduce((acc, cashFlow, i) => {
+      return acc + cashFlow / Math.pow(1 + rate, i + 1);
+    }, -investment);
 
-    while (iteration < maxIterations) {
-      const currentNPV = npv(rate);
-      const nextNPV = npv(rate + tolerance);
-      const derivative = (nextNPV - currentNPV) / tolerance;
-      const newRate = rate - currentNPV / derivative;
-
-      if (Math.abs(newRate - rate) < tolerance) {
-        setIrr(newRate * 100); // Convertir la tasa a porcentaje
-        return;
-      }
-
-      rate = newRate;
-      iteration += 1;
-    }
-
-    setIrr(null); // Si no converge, no se encuentra una TIR
+    setNpv(calculatedNPV);
   };
 
   return (
@@ -68,7 +54,7 @@ function TirPage() {
       component="form"
       onSubmit={(e) => {
         e.preventDefault();
-        calculateIRR();
+        calculateNPV();
       }}
       sx={{
         display: 'flex',
@@ -79,12 +65,21 @@ function TirPage() {
         mt: 4,
       }}
     >
-      <Typography variant="h5">Calcular Tasa Interna de Retorno (TIR)</Typography>
+      <Typography variant="h5">Calcular Valor Presente Neto (VPN)</Typography>
       
       <TextField
         label="Inversión Inicial"
         value={initialInvestment}
         onChange={handleInitialInvestmentChange}
+        type="number"
+        fullWidth
+        required
+      />
+
+      <TextField
+        label="Tasa de Descuento (%)"
+        value={discountRate}
+        onChange={handleDiscountRateChange}
         type="number"
         fullWidth
         required
@@ -112,20 +107,20 @@ function TirPage() {
       ))}
 
       <Button type="submit" variant="contained" color="primary">
-        Calcular TIR
+        Calcular VPN
       </Button>
 
-      {irr !== null ? (
+      {npv !== null ? (
         <Typography variant="h6" sx={{ mt: 2 }}>
-          TIR: {irr.toFixed(2)}%
+          VPN: ${npv.toFixed(2)}
         </Typography>
       ) : (
         <Typography variant="h6" color="error" sx={{ mt: 2 }}>
-          No se pudo calcular la TIR en los períodos especificados.
+          No se pudo calcular el VPN.
         </Typography>
       )}
     </Box>
   );
 }
 
-export default TirPage
+export default VanPage
