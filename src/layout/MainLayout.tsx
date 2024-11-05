@@ -7,7 +7,9 @@ function MainLayout() {
   return (
     <Box>
       <ButtonAppBar />
-      <Outlet />
+      <Box p={5}>
+        <Outlet />
+      </Box>
     </Box>    
   )
 }

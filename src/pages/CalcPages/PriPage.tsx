@@ -11,6 +11,7 @@ function PriPage() {
   const [periods, setPeriods] = useState(1);
   const [cashFlows, setCashFlows] = useState<CashFlow[]>([]);
   const [paybackPeriod, setPaybackPeriod] = useState<number | null>(null);
+  const [timeBreakdown, setTimeBreakdown] = useState<{ years: number; months: number; days: number } | null>(null);
 
   const handleInitialInvestmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInitialInvestment(event.target.value);
@@ -40,13 +41,30 @@ function PriPage() {
     for (let i = 0; i < cashFlows.length; i++) {
       cumulativeCashFlow += cashFlows[i].amount;
       period = i + 1;
+
       if (cumulativeCashFlow >= investment) {
-        setPaybackPeriod(period);
+        const previousCumulative = cumulativeCashFlow - cashFlows[i].amount;
+        const remainingInvestment = investment - previousCumulative;
+        const fractionalPeriod = remainingInvestment / cashFlows[i].amount;
+        const totalPri = period - 1 + fractionalPeriod;
+
+        setPaybackPeriod(totalPri);
+        convertPriToTime(totalPri);
         return;
       }
     }
 
-    setPaybackPeriod(null); // No se recupera la inversión en los períodos dados
+    setPaybackPeriod(null);
+    setTimeBreakdown(null);
+  };
+
+  const convertPriToTime = (pri: number) => {
+    const years = Math.floor(pri);
+    const remainingMonths = (pri - years) * 12;
+    const months = Math.floor(remainingMonths);
+    const days = Math.round((remainingMonths - months) * 30);
+
+    setTimeBreakdown({ years, months, days });
   };
 
   return (
@@ -98,9 +116,9 @@ function PriPage() {
         Calcular PRI
       </Button>
 
-      {paybackPeriod !== null ? (
+      {paybackPeriod !== null && timeBreakdown ? (
         <Typography variant="h6" sx={{ mt: 2 }}>
-          PRI: {paybackPeriod} período(s) para recuperar la inversión.
+          PRI: {timeBreakdown.years} año(s), {timeBreakdown.months} mes(es), {timeBreakdown.days} día(s) para recuperar la inversión.
         </Typography>
       ) : (
         <Typography variant="h6" color="error" sx={{ mt: 2 }}>
@@ -111,4 +129,4 @@ function PriPage() {
   );
 }
 
-export default PriPage
+export default PriPage;

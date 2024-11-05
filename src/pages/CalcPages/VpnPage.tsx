@@ -6,29 +6,34 @@ interface CashFlow {
   amount: number;
 }
 
-
 function VanPage() {
-  const [initialInvestment, setInitialInvestment] = useState('');
-  const [discountRate, setDiscountRate] = useState('');
+  const [initialInvestment, setInitialInvestment] = useState("");
+  const [discountRate, setDiscountRate] = useState("");
   const [periods, setPeriods] = useState(1);
   const [cashFlows, setCashFlows] = useState<CashFlow[]>([]);
   const [npv, setNpv] = useState<number | null>(null);
 
-  const handleInitialInvestmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInitialInvestmentChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setInitialInvestment(event.target.value);
   };
 
-  const handleDiscountRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDiscountRateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setDiscountRate(event.target.value);
   };
 
   const handlePeriodsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newPeriods = parseInt(event.target.value, 10);
     setPeriods(newPeriods);
-    setCashFlows(Array.from({ length: newPeriods }, (_, index) => ({
-      period: index + 1,
-      amount: 0,
-    })));
+    setCashFlows(
+      Array.from({ length: newPeriods }, (_, index) => ({
+        period: index + 1,
+        amount: 0,
+      }))
+    );
   };
 
   const handleCashFlowChange = (index: number, value: string) => {
@@ -57,16 +62,16 @@ function VanPage() {
         calculateNPV();
       }}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 2,
         maxWidth: 400,
-        mx: 'auto',
+        mx: "auto",
         mt: 4,
       }}
     >
       <Typography variant="h5">Calcular Valor Presente Neto (VPN)</Typography>
-      
+
       <TextField
         label="Inversión Inicial"
         value={initialInvestment}
@@ -113,6 +118,21 @@ function VanPage() {
       {npv !== null ? (
         <Typography variant="h6" sx={{ mt: 2 }}>
           VPN: ${npv.toFixed(2)}
+          {npv < 0 && (
+            <Typography variant="h6" color="red" sx={{ mt: 2 }}>
+              Rechazo
+            </Typography>
+          )}
+          {npv > 0 && (
+            <Typography variant="h6" color="green" sx={{ mt: 2 }}>
+              Aceptar
+            </Typography>
+          )}
+          {npv == 0 && (
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Replantea
+            </Typography>
+          )}
         </Typography>
       ) : (
         <Typography variant="h6" color="error" sx={{ mt: 2 }}>
@@ -123,4 +143,4 @@ function VanPage() {
   );
 }
 
-export default VanPage
+export default VanPage;
