@@ -1,18 +1,19 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
-
 function VaePage() {
-  const [npv, setNpv] = useState('');
-  const [discountRate, setDiscountRate] = useState('');
-  const [lifeSpan, setLifeSpan] = useState('');
+  const [npv, setNpv] = useState("");
+  const [discountRate, setDiscountRate] = useState("");
+  const [lifeSpan, setLifeSpan] = useState("");
   const [aev, setAev] = useState<number | null>(null);
 
   const handleNpvChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNpv(event.target.value);
   };
 
-  const handleDiscountRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDiscountRateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setDiscountRate(event.target.value);
   };
 
@@ -39,15 +40,17 @@ function VaePage() {
         calculateAEV();
       }}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 2,
         maxWidth: 400,
-        mx: 'auto',
+        mx: "auto",
         mt: 4,
       }}
     >
-      <Typography variant="h5">Calcular Valor Anual Equivalente (VAE)</Typography>
+      <Typography variant="h5">
+        Calcular Valor Anual Equivalente (VAE)
+      </Typography>
 
       <TextField
         label="Valor Presente Neto (VPN)"
@@ -83,6 +86,21 @@ function VaePage() {
       {aev !== null ? (
         <Typography variant="h6" sx={{ mt: 2 }}>
           VAE: ${aev.toFixed(2)} por año
+          {aev < 0 && (
+            <Typography variant="h6" color="red" sx={{ mt: 2 }}>
+              No invertir
+            </Typography>
+          )}
+          {aev > 0 && (
+            <Typography variant="h6" color="green" sx={{ mt: 2 }}>
+              Invertir
+            </Typography>
+          )}
+          {aev == 0 && (
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Recalcular
+            </Typography>
+          )}
         </Typography>
       ) : (
         <Typography variant="h6" color="error" sx={{ mt: 2 }}>
@@ -91,7 +109,6 @@ function VaePage() {
       )}
     </Box>
   );
-
 }
 
-export default VaePage
+export default VaePage;

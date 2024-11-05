@@ -8,12 +8,17 @@ interface CashFlow {
 
 function TirPage() {
   const [initialInvestment, setInitialInvestment] = useState('');
+  const [toCompare, setToCompare] = useState('');
   const [periods, setPeriods] = useState(1);
   const [cashFlows, setCashFlows] = useState<CashFlow[]>([]);
   const [irr, setIrr] = useState<number | null>(null);
 
   const handleInitialInvestmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInitialInvestment(event.target.value);
+  };
+  
+  const handleToCompareChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setToCompare(event.target.value);
   };
 
   const handlePeriodsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +96,15 @@ function TirPage() {
       />
 
       <TextField
+        label="Inversión Inicial"
+        value={toCompare}
+        onChange={handleToCompareChange}
+        type="number"
+        fullWidth
+        required
+      />
+
+      <TextField
         label="Número de Períodos"
         value={periods}
         onChange={handlePeriodsChange}
@@ -118,6 +132,27 @@ function TirPage() {
       {irr !== null ? (
         <Typography variant="h6" sx={{ mt: 2 }}>
           TIR: {irr.toFixed(2)}%
+          {
+            irr < +toCompare && (
+              <Typography variant="h6" color="red" sx={{ mt: 2 }}>
+                No invertir
+              </Typography>
+            )
+          }
+          {
+            irr == +toCompare && (
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                replantear
+              </Typography>
+            )
+          }
+          {
+            irr > +toCompare && (
+              <Typography variant="h6" color="green" sx={{ mt: 2 }}>
+                Invertir
+              </Typography>
+            )
+          }
         </Typography>
       ) : (
         <Typography variant="h6" color="error" sx={{ mt: 2 }}>
